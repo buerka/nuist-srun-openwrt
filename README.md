@@ -4,7 +4,7 @@
 
 Lightweight OpenWrt campus network auto-login client for Nanjing University of Information Science and Technology (NUIST), using SRun authentication with automatic reconnection.
 
-源自南京信息工程大学校园网的实际使用需求，非学校或深澜官方项目。仓库不包含任何真实账号、密码、认证记录或部署配置。
+源自南京信息工程大学校园网的实际使用需求，非学校或深澜官方项目。
 
 ## 特点
 
@@ -134,4 +134,4 @@ python3 tests/run.py
 
 ## 许可证
 
-[MIT](LICENSE)。项目仅供本人获授权的网络账号使用；没有附带学校页面资源或第三方打包库。
+[MIT](LICENSE)。项目仅供本人获授权的网络账号使用。
