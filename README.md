@@ -1,6 +1,8 @@
-# nuist-srun-openwrt
+# 南京信息工程大学校园网自动登录 · OpenWrt / SRun
 
-适用于 OpenWrt 的轻量深澜 SRun 校园网自动认证客户端。使用 Lua 和 curl，正常在线时每分钟查询一次状态，离线后自动获取新的 challenge 并登录。
+`nuist-srun-openwrt` 是面向**南京信息工程大学（南信大 / NUIST）校园网**的 OpenWrt 路由器自动登录工具，支持深澜 SRun 认证、开机自启和断线重连（掉线自动重登）。使用 Lua 和 curl，正常在线时每分钟查询一次状态，离线后自动获取新的 challenge 并登录。
+
+Lightweight OpenWrt campus network auto-login client for Nanjing University of Information Science and Technology (NUIST), using SRun authentication with automatic reconnection.
 
 源自南京信息工程大学校园网的实际使用需求，非学校或深澜官方项目。仓库不包含任何真实账号、密码、认证记录或部署配置。
 
