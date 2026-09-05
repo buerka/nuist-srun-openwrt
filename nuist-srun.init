@@ -1,0 +1,22 @@
+#!/bin/sh /etc/rc.common
+START=95
+STOP=10
+USE_PROCD=1
+
+start_service() {
+    [ -r /etc/nuist-srun.json ] || return 1
+    procd_open_instance
+    procd_set_param command /bin/sh /usr/lib/nuist-srun/watch.sh
+    procd_set_param respawn 3600 5 5
+    procd_set_param stdout 1
+    procd_set_param stderr 1
+    procd_set_param file /etc/nuist-srun.json
+    procd_close_instance
+}
+
+service_triggers() {
+    local interface
+    interface=$(/usr/bin/lua /usr/lib/nuist-srun/srun.lua interface 2>/dev/null) || return
+    case "$interface" in ''|*[!A-Za-z0-9_]*) return;; esac
+    procd_add_interface_trigger 'interface.*' "$interface" /etc/init.d/nuist-srun restart
+}

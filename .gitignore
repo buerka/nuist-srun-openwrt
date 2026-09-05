@@ -1,0 +1,22 @@
+# Never publish local credentials or authentication captures.
+nuist-srun.json
+config.json
+*.local.json
+private/
+captures/
+reference/
+*.har
+*.pcap
+*.pcapng
+*.log
+*.pem
+*.key
+*.tar
+*.tar.gz
+*.zip
+.env
+.env.*
+__pycache__/
+*.pyc
+.DS_Store
+dist/

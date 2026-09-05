@@ -1,0 +1,41 @@
+-- All inputs below are synthetic, never captured from a real account.
+local bit=dofile("tests/bit.lua")
+local c=dofile("src/srun_crypto.lua")(bit)
+local checks=0
+local function eq(actual,expected) assert(actual==expected,"crypto vector mismatch"); checks=checks+1 end
+eq(c.md5(""),"d41d8cd98f00b204e9800998ecf8427e")
+eq(c.sha1(""),"da39a3ee5e6b4b0d3255bfef95601890afd80709")
+eq(c.md5("a"),"0cc175b9c0f1b6a831c399e269772661")
+eq(c.sha1("a"),"86f7e437faa5a7fce15d1ddcb9eaeaea377667b8")
+eq(c.md5("abc"),"900150983cd24fb0d6963f7d28e17f72")
+eq(c.sha1("abc"),"a9993e364706816aba3e25717850c26c9cd0d89d")
+eq(c.md5("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),"014842d480b571495a4a0363793f7367")
+eq(c.sha1("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),"0098ba824b5c16427bd7a1122a5a442a25ec644d")
+eq(c.md5("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"),"398533d48111e9f664b1f64cb10c4b63")
+eq(c.sha1("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"),"c3efa690fa3fdd2e2526853eed670538ea127638")
+eq(c.md5("\228\184\173\230\150\135\240\159\152\128"),"972d80f0bb04f9c49f75661a4aeb2df1")
+eq(c.sha1("\228\184\173\230\150\135\240\159\152\128"),"da34ce27cf5e4a0ca8350fbf0d54ea4146355814")
+eq(c.hmac_md5("key","message"),"4e4748e62b463521f6775fbf921234b5")
+eq(c.hmac_md5("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk","message"),"f8eeb41003ac23a4d3d46d3ea22dd7cf")
+eq(c.hmac_md5("",""),"74e6f7298a9c2d168935f58c001bad88")
+do local p=c.params("demo@campus","test-password","192.0.2.10","1","0123456789abcdef0123456789abcdef")
+eq(p.password,"{MD5}7da7d72e92213fc0f6a611e30401dea0")
+eq(p.info,"{SRBX1}wz77ABIxKGbSnzabP4yE8SsMnlb//OZV1JdA0WqeHzHRBJYJEJWQ4lgxEhNMw71xmlqEbf6go0IwA8HCkCbGIwf0MgjReA34OKLT5rzYHv6O350aI6qxARpCHMtp0XpwCNr7egXkk8F17x6W")
+eq(p.chksum,"d2a34279a52c98d315ab9843bbf1ce615f046f96")
+end
+do local p=c.params("demo@campus","a b+&%\034\092","198.51.100.10","2","abcdef0123456789abcdef0123456789")
+eq(p.password,"{MD5}ca1321f7d8538616b362dc51e9154208")
+eq(p.info,"{SRBX1}jyucV+vtRddJgpDfYtYEDITCeG6H9/trfpS7P16YBSG9Jb9SA785uqRj4u0FLhkVIjMqZscxcuJiBQZYVRVWAY5n1WrurbBBR+RIPkxBkw/ktFT26ke6I/Nm8vrOjDWSJoPc29DuE0rFJ7k8")
+eq(p.chksum,"c698cf62e319dbd033027e0ee646e7b413b8f66b")
+end
+do local p=c.params("demo","\228\184\173\230\150\135\230\181\139\232\175\149\240\159\152\128","203.0.113.10","3","00112233445566778899aabbccddeeff")
+eq(p.password,"{MD5}b3a3a1e9aa29b3e532f62f638e118d6e")
+eq(p.info,"{SRBX1}6a8WCr8m8E0EduAulS4BS0oMD5pEXOd/rRsGk4x1ZbEAGRA/WZ9Yu7sYIGfiIvtXvjtnBykcvjjWziJt0rxV9avSNCpFy8PyLyVWOYwxzWSrl4fMWeycpCLV5Chx7Y58")
+eq(p.chksum,"317496299173ef85147ebe3b679635f985c37660")
+end
+do local p=c.params("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx","192.0.2.20","4","ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
+eq(p.password,"{MD5}9348e923559dc6bff138b98a538a2785")
+eq(p.info,"{SRBX1}/engCNKoyWf02cTZn7zGO1e4/dqcdX3jJtFiYNXtfA2lsvt/p4RZPvUiGy7fHZuZDlb+Zk3Kv5WVOkAt8ApIwISFsBfucW1dNm/Jf3L3oc7vaLyJ9dAfMK7MY9WJ8/Qpd5Fr16ing5d/b0nI52ghUirTuSum68HZ5XuVjVUOIEY4YY+2qDWSUA51PCV583YQrXgXOmygR/5yOGLUWFsPY74DTznVnLTnZ2QVFf0El8VPIyEKtXUOjJkqFeX5UnA8tuNHP17R5DSSDcydz5PF9FazqhBAawWiMWYnb9yivJNAKiXtG5sOREYroamLkE4D+yK98rjRswbKIicU7fnPCwSlSh9cAYyslPSaSiic2k50TnXAbEl9ZTMdmM6Jla2lz+IY++yPO689i1RD/tdUFcqCICFHlSXRatGnJgpEBRyCqxvqkDFKLl67+EwJYRY2c9e+cPuMc+yoQ8hyfBCYyxU0NwXl7DWn3XQQfv==")
+eq(p.chksum,"96ec4425cfadb00f7964f9bbff04f25a6c2f8a08")
+end
+print("PASS: "..checks.." cryptographic checks")

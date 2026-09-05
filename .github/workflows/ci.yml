@@ -1,0 +1,20 @@
+name: Offline tests
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        lua: ['5.1', '5.4']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install test runtime
+        run: sudo apt-get update && sudo apt-get install -y lua${{ matrix.lua }} lua-bitop
+      - name: Run offline tests and privacy guard
+        env:
+          LUA: lua${{ matrix.lua }}
+        run: python3 tests/run.py

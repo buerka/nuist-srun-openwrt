@@ -1,0 +1,8 @@
+{
+  "portal": "http://192.0.2.1",
+  "ac_id": "1",
+  "username": "",
+  "password": "",
+  "interface": "wan",
+  "interval": 60
+}
